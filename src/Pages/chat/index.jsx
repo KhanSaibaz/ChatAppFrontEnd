@@ -1,6 +1,9 @@
 import Cookies from 'js-cookie'
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ContactContainer from './components/contact-container'
+import EmptyChatConatiner from './components/empty-chat-container'
+import ChatContainer from './components/chat-container'
 
 function Chat() {
   
@@ -14,7 +17,12 @@ function Chat() {
   }, [])
   
   return (
-    <div>Chat</div>
+    <div className='flex text-white overflow-hidden h-[100vh]'>
+    <ContactContainer/>
+    {/* <EmptyChatConatiner/> */}
+    <ChatContainer/>
+    </div>
+
   )
 }
 

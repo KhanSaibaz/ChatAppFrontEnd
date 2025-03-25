@@ -1,3 +1,4 @@
+import animationData from '../assets/lottie-json'
 export const colors = [
     "bg-[#712c4a57] text-[#ff006e] border-[1px] border-[#ff006faa]",
     "bg-[#ffd60a2a] text-[#ffd60a] border-[1px] border-[#ffd60abb]",
@@ -11,3 +12,12 @@ export const getColor = (color) => {
     }
     return colors[0]; // Fallback to the first color if out of range
 };
+
+export const animationDefaultOptions={
+    loop:true,
+    autoplay:true,
+    animationData:animationData
+    // rendererSettings:{
+
+    // }
+}
