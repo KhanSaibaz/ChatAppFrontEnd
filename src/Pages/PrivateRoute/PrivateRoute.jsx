@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 
 const PrivateRoute = ({ children }) => {
     const token = useSelector((state) => state.auth?.token) || Cookies.get('token');
-    console.log(token,'ioioioi')
     return token ? children : <Navigate to="/auth" />;
 };
 

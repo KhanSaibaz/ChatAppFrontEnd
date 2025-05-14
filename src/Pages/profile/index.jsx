@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector ,useDispatch} from 'react-redux';
 import { useUserInfoQuery,useProfileUpdateMutation } from '@/redux/ApiSlice/User.slice';
 import { IoArrowBack } from "react-icons/io5";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
@@ -8,35 +8,41 @@ import { FaTrash, FaPlus } from 'react-icons/fa';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { SetUserData } from '@/redux/ApiSlice/UserData.slice';
+import { toast } from 'sonner';
 
 
 function Profile() {
   const { data: users } = useUserInfoQuery();
   const [updateProfile] = useProfileUpdateMutation();
-  const data = useSelector((state) => state.auth?.token);
+  const dispatch = useDispatch();
+
+  
+  console.log(typeof users?.data?.setColor,'saibaz saay');
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [image, setImage] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(0);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [hovered, setHovered] = useState(false);
   const navigate=useNavigate()
   
-  // Reference for file input
   const fileInputRef = useRef(null);
-
-  console.log(selectedColor,"io");
+  
+  console.log(selectedColor,'satetetet');
   
   useEffect(() => {
-    console.log(users?.data, 'users');
     setFirstName(users?.data?.firstName || null)
     setLastName(users?.data?.lastName|| null)
-    setSelectedColor(users?.data?.setColor || null)
+    const clr= users?.data?.setColor
+    setSelectedColor(users?.data?.setColor || clr )
     setImage(users?.data?.image || null)
     Cookies.set("profileSetup",users?.data?.profileSetup)
+    if(users?.data){
+      dispatch(SetUserData(users?.data))
+    }
 
   }, [users]);
-  console.log(selectedColor,"selectcolor");
   
 
 const handleNavigate=()=>{
@@ -48,11 +54,9 @@ const handleNavigate=()=>{
   // Handle file selection
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    console.log(event.target.files[0],'saibaz  ');
     
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      console.log(imageUrl);
       
       setImage(imageUrl);
     }
@@ -77,7 +81,6 @@ const handleNavigate=()=>{
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
     formData.append("selectedColor", selectedColor);
-    console.log(fileInputRef.current.files,"fileInputRef.current?.files[0])");
     
     
     if (fileInputRef.current?.files.length > 0) {
@@ -85,13 +88,14 @@ const handleNavigate=()=>{
     } else if (image) {
       formData.append("profileImage", image);
     }
-    console.log(formData,'formdata')
   
     try {
       const res = await updateProfile(formData);
-      console.log(res);
+      
+      toast(res?.data?.message)
+  
     } catch (error) {
-      console.error("Error updating profile:", error);
+      toast("Faield to update",error)
     }
   };
   
@@ -157,7 +161,7 @@ const handleNavigate=()=>{
           </div>
         </div>
         <div className="w-full">
-          <button type="button" className="text-white w-full bg-[#730039] hover:bg-red-800 transition duration-300 font-bold rounded-lg px-5 py-2.5 cursor-pointer" onClick={handleSubmitProfile}>
+          <button type="button" className="text-white w-full bg-yellow-400 hover:bg-yellow-800 transition duration-300 font-bold rounded-lg px-5 py-2.5 cursor-pointer" onClick={handleSubmitProfile}>
             Save Profile
           </button>
         </div>

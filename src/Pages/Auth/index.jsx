@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { LoginSetToken } from '../../redux/ApiSlice/Token.slice.js'
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import Logo from '../../assets/Logo.png'
+import { toast } from "sonner"
+
 
 
 function Auth() {
@@ -20,14 +23,11 @@ function Auth() {
   const [loginUser] = useLoginUserMutation();
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const token = useSelector((state) => state.auth?.token) || Cookies.get('token')
-  console.log(token);
 
 
   const handleLogin = async () => {
     try {
       const response = await loginUser({ email: email, password: password })
-      console.log(response?.data?.data?.user);
 
       const datas = {
         token: response?.data?.data?.accessTokenGenerate,
@@ -36,12 +36,18 @@ function Auth() {
       dispatch(LoginSetToken(datas))
       setEmail('')
       setPassword('')
-      Cookies.set('token',response?.data?.data?.accessTokenGenerate)
+      Cookies.set('token', response?.data?.data?.accessTokenGenerate)
+      toast(response?.data?.message)
+      console.log(response?.data);
+    
+
       if (response?.data?.data?.accessTokenGenerate) {
         navigate('/profile')
       }
 
     } catch (error) {
+      toast("Eroor occur.",error)
+
       console.log(error);
 
     }
@@ -49,8 +55,7 @@ function Auth() {
 
   const handleSignup = async () => {
     try {
-      const response = await registerUser({ email: email, password: password })
-      console.log(response, 'saibaz');
+      await registerUser({ email: email, password: password })
       setEmail('')
       setPassword('')
       setconfirmPassword('')
@@ -62,27 +67,30 @@ function Auth() {
   }
 
   return (
-    <div className='h-[100vh] w-[100vw] items-center justify-center'>
-      <div className='h-[80vh] bg-white border-2 border-white text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[90vw] xl:w-[60vw] grid xl:grid-col-2' >
+    <div className='h-[100vh] w-[100vw] flex items-center justify-center  bg-[#1f1d1d]'>
+      <div className='h-[80vh]  bg-[#282828] border-1 text-opacity-90 shadow-2xl w-[80vw] md:w-[90vw] lg:w-[90vw] xl:w-[60vw] grid xl:grid-col-2' >
         <div className='flex flex-col justify-center items-center gap-10'>
           <div className='flex flex-col justify-center items-center'>
-            <div className='flex  justify-center items-center '>
-              <h1 className='text-5xl font-bold md:text-6xl'>Welcome</h1>
-              <img src="" alt="victory" className='h-[100px]' />
+            <div className='flex  justify-center items-center gap-5'>
+              <h1 className='text-5xl font-bold md:text-6xl text-yellow-300'>Welcome</h1>
+              {/* <img src="" alt="victory" className='h-[100px]' /> */}
+              <img src={Logo} alt="Background" className='h-[100px]' />
+
             </div>
-            <p className='font-medium text-center'> Fill in the detail to get started with chat app</p>
+            <p className='font-medium text-center text-yellow-300'> Fill in the detail to get started with chat app</p>
           </div>
 
-          <div className="flex item-center  justify-center w-full">
+          <div className="flex item-center  justify-center w-full text-white">
             <Tabs className="w-3/4" defaultValue="Login">
-              <TabsList className="bg-transparent rounded-none w-full">
-                <TabsTrigger value="Login" className="data-[state=active]:bg-transparent text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-blue-500 p-3 transition-all duration-300" >Login </TabsTrigger>
-                <TabsTrigger value="Signup" className="data-[state=active]:bg-transparent text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-black data-[state=active]:font-semibold data-[state=active]:border-b-blue-500 p-3 transition-all duration-300" >Sign up</TabsTrigger>
+              <TabsList className="bg-transparent rounded-none w-full text-yellow-300 ">
+                <TabsTrigger value="Login" className="data-[state=active]:bg-transparent text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-yellow-400 data-[state=active]:font-semibold data-[state=active]:border-b-yellow-500 p-3 transition-all duration-300 cursor-pointer" >Login </TabsTrigger>
+
+                <TabsTrigger value="Signup" className="data-[state=active]:bg-transparent text-opacity-90 border-b-2 rounded-none w-full data-[state=active]:text-yellow-400 data-[state=active]:font-semibold data-[state=active]:border-b-yellow-500 p-3 transition-all duration-300 cursor-pointer" >Sign up</TabsTrigger>
               </TabsList>
               <TabsContent className="flex flex-col gap-5 mt-5" value="Login">
                 <Input placeholder="Email" className="rounded-full p-6" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input placeholder="Password" className="rounded-full p-6" value={password} onChange={(e) => setPassword(e.target.value)} />
-                <Button variant="outline" className="bg-blue-500 rounded-full text-white cursor-pointer p-6" onClick={handleLogin}>Login</Button>
+                <Button variant="outline" className="bg-yellow-300 rounded-full text-black cursor-pointer p-6" onClick={handleLogin}>Login</Button>
 
 
               </TabsContent>
@@ -90,7 +98,7 @@ function Auth() {
                 <Input placeholder="Email" className="rounded-full p-6" value={email} onChange={(e) => setEmail(e.target.value)} />
                 <Input placeholder="Password" className="rounded-full p-6" value={password} onChange={(e) => setPassword(e.target.value)} />
                 <Input placeholder="Confirm Password" className="rounded-full p-6" value={confirmPassword} onChange={(e) => setconfirmPassword(e.target.value)} />
-                <Button variant="outline" className="bg-blue-500 rounded-full text-white cursor-pointer p-6" onClick={handleSignup}>Sign up</Button>
+                <Button variant="outline" className="bg-yellow-300 rounded-full text-black cursor-pointer p-6" onClick={handleSignup}>Sign up</Button>
 
               </TabsContent>
             </Tabs>
@@ -98,7 +106,7 @@ function Auth() {
 
         </div>
         <div className='hidden xl:flex justify-center items-center'>
-          <img src="" alt="Background" />
+          {/* <img src={Logo} alt="Background" /> */}
         </div>
       </div>
     </div>

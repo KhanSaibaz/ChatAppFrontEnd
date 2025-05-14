@@ -8,7 +8,6 @@ import Cookies from 'js-cookie';
 
 function App() {
     const token = useSelector((state) => state.auth?.token) || Cookies.get('token');
-    console.log(token,'app');
     
     return (
         <BrowserRouter>
